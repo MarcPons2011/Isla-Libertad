@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Isla Libertad 3D</title>
+    <style>
+        body { background: #111; color: white; font-family: sans-serif; text-align: center; padding: 50px; }
+        button { background: #28a745; color: white; border: none; padding: 10px 20px; font-size: 18px; cursor: pointer; border-radius: 5px; margin: 10px; }
+        input { padding: 10px; font-size: 16px; border-radius: 5px; border: none; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>ISLA LIBERTAD 3D</h1>
+    <p>Empiezas con <strong>\$300</strong>. Reúne <strong>\$5000</strong> y paga al Capitán Vargas para escapar.</p>
+    
+    <h2>🌐 Jugar online con amigos</h2>
+    <button id="btnCrear">➕ Crear sala</button>
+    <br><br>
+    <input type="text" id="codigoInput" placeholder="Código de la sala">
+    <button id="btnUnir">🔗 Unirse</button>
+    
+    <h3 id="estado" style="color: #ffc107;"></h3>
+
+    <!-- Conexión multijugador automática -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        document.getElementById('btnCrear').onclick = () => {
+            socket.emit('crearSala');
+        };
+
+        document.getElementById('btnUnir').onclick = () => {
+            const codigo = document.getElementById('codigoInput').value;
+            if(codigo) socket.emit('unirseSala', codigo.toUpperCase());
+        };
+
+        socket.on('salaCreada', (codigo) => {
+            document.getElementById('estado').innerText = `Sala creada con éxito. Código: ${codigo}`;
+        });
+
+        socket.on('jugadorUnido', (msg) => {
+            document.getElementById('estado').innerText = msg;
+        });
+    </script>
+</body>
+</html>
